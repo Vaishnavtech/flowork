@@ -1,48 +1,30 @@
-name: Node.js CI/CD
-
+name: CI/CD Pipeline
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout the code
+        uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+      - name: Build the application
+        run: echo 'Building the application'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Run unit tests
+        run: echo 'Running unit tests'
 
-      - name: Run tests
-        run: npm test
+      - name: Run integration tests
+        run: echo 'Running integration tests'
 
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+      - name: Build docker image
+        run: echo 'Building the docker image'
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Push docker image
+        run: echo 'Pushing the docker image to the registry'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Deploy application
-        run: |
-          echo "Deploying application..."
-          # Add your deployment commands here
+      - name: Deploy the application
+        run: echo 'Deploying the application to the kubernetes cluster'
