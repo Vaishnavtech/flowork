@@ -1,4 +1,5 @@
 name: CI/CD Pipeline
+
 on:
   push:
     branches:
@@ -8,23 +9,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the code
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Build the application
-        run: echo 'Building the application'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-      - name: Run unit tests
-        run: echo 'Running unit tests'
+      - name: Cache Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-      - name: Run integration tests
-        run: echo 'Running integration tests'
+      - name: Install Dependencies
+        run: npm ci
 
-      - name: Build docker image
-        run: echo 'Building the docker image'
-
-      - name: Push docker image
-        run: echo 'Pushing the docker image to the registry'
-
-      - name: Deploy the application
-        run: echo 'Deploying the application to the kubernetes cluster'
+      - name: Run Tests
+        run: npm test
